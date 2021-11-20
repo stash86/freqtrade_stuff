@@ -1,0 +1,35 @@
+---
+version: '3'
+services:
+  freqtrade:
+    image: freqtradeorg/freqtrade:develop
+    restart: unless-stopped
+    container_name: freqtrade
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    # ports:
+    #   - "127.0.0.1:8080:8080"
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade.log
+      --db-url sqlite:////freqtrade/user_data/tradesv3-cbhcv8xh.sqlite
+      --config /freqtrade/user_data/config.json
+      --config /freqtrade/user_data/config-binance.json
+      --config /freqtrade/user_data/config-telegram1.json
+      --strategy CombinedBinHAndClucV8XH
+  freqtrade2:
+    image: freqtradeorg/freqtrade:develop
+    restart: unless-stopped
+    container_name: freqtrade2
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    ports:
+      - "127.0.0.1:8081:8080"
+    command: >
+      trade
+      --logfile /freqtrade/user_data/logs/freqtrade2.log
+      --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
+      --config /freqtrade/user_data/config.json
+      --config /freqtrade/user_data/config-binance.json
+      --config /freqtrade/user_data/config-telegram2.json
+      --strategy BigZ04HO

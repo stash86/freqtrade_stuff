@@ -1,0 +1,20 @@
+NotAnotherSMAOffsetStrategy and RalliV1
+https://github.com/Juusseli/Trade
+
+NostalgiaForInfinityNext
+https://github.com/iterativv/NostalgiaForInfinity
+
+SMAOffsetV2 and 2 other strats
+https://github.com/GeorgeMurAlkh/freqtrade-stuff/tree/main/user_data/strategies
+
+CryptoFrog
+https://github.com/froggleston/cryptofrog-strategies
+
+Obelisk Ichimoku
+https://github.com/brookmiles/freqtrade-stuff/tree/main/strategies
+
+BigZ and CombinedBinHClucAndMAD by ilya
+https://github.com/i1ya/freqtrade-strategies
+
+Other public strats (need to be hyperopted further before being use on live)
+https://github.com/freqtrade/freqtrade-strategies/tree/master/user_data/strategies

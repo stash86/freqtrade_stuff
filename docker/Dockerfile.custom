@@ -1,0 +1,3 @@
+FROM freqtradeorg/freqtrade:develop
+
+RUN pip install ta finta py3cw

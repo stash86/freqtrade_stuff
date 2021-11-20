@@ -1,0 +1,68 @@
+name: freqtrade
+channels:
+  - conda-forge
+# - defaults
+dependencies:
+# 1/4 req main
+#    - python>=3.7
+    - python=3.9
+    - pip
+    - numpy
+    - pandas
+    - cryptography
+    - aiohttp
+    - SQLAlchemy
+    - python-telegram-bot
+    - arrow
+    - cachetools
+    - requests
+    - urllib3
+    - wrapt
+    - jsonschema
+#    - TA-Lib
+    - tabulate
+    - jinja2
+    - python-blosc
+    - blosc
+    - sdnotify
+    - fastapi
+    - uvicorn
+    - pyjwt
+    - colorama
+    - questionary
+    - prompt-toolkit
+    - pytables
+    - python-rapidjson
+
+    # ============================
+    # 2/4 req dev
+
+
+    # ============================
+    # 3/4 req hyperopt
+
+    - scipy
+    - scikit-learn
+    - filelock
+    - scikit-optimize
+    - joblib
+    - progressbar2
+    - psutil
+    # ============================
+    # 4/4 req plot
+
+    - plotly
+    - jupyter
+
+    - pip:
+        - pycoingecko
+        - py-find-1st
+        - ccxt==1.53.72
+        - TA-lib
+        - freqtrade==2021.7 # comment this line for dev version
+        - technical
+        - pandas-ta
+        - ta
+        - finta
+        # - -e . # use this line for dev version, need to use first: git clone https://github.com/freqtrade/freqtrade.git .
+   

@@ -1,0 +1,36 @@
+{
+    "telegram": {
+        "enabled": true,
+        "token": "",
+        "chat_id": "",
+        "keyboard": [
+            ["/profit","/trades","/status table","/daily"],
+            ["/performance","/logs","/show_config","/whitelist"],
+            ["/reload_config","/help","/start","/stop"]
+        ],
+        "notification_settings": {
+            "status": "silent",
+            "warning": "on",
+            "startup": "silent",
+            "buy": "silent",
+            "sell": {
+                "roi": "silent",
+                "emergency_sell": "silent",
+                "force_sell": "silent",
+                "sell_signal": "silent",
+                "trailing_stop_loss": "silent",
+                "stop_loss": "silent",
+                "stoploss_on_exchange": "silent",
+                "custom_sell": "silent"
+            },
+            "buy_cancel": "silent",
+            "sell_cancel": "silent",
+            "buy_fill": "off",
+            "sell_fill": "off",
+            "protection_trigger": "on",
+            "protection_trigger_global": "on"
+        },
+        "reload": true,
+        "balance_dust_level": 0.01
+    }
+}
