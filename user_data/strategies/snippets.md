@@ -1,10 +1,11 @@
-- Example of getting the candle that trigger buy of a trade on 5m tf
-
+### Example of getting the candle that trigger buy of a trade on 5m tf
+```
 trade_date = timeframe_to_prev_date("5m", trade.open_date_utc)
 trade_candle = df.loc[(df['date'] == trade_date)]
+```
 
-
-- Example of using buy tag on custom_sell or stoploss
+### Example of using buy tag on custom_sell or stoploss
+```
 def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
                         current_rate: float, current_profit: float, **kwargs) -> float:
 
@@ -29,3 +30,4 @@ def custom_stoploss(self, pair: str, trade: 'Trade', current_time: datetime,
             sl_new = 0.03
 
         return sl_new
+```
