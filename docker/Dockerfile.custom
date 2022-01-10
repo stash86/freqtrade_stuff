@@ -1,3 +1,12 @@
 FROM freqtradeorg/freqtrade:develop
 
-RUN pip install ta finta py3cw
+# For DCA
+# FROM anujshah1996/freqtrade:latest
+
+# Switch user to root if you must install something from apt
+# Don't forget to switch the user back below!
+# USER root
+
+RUN pip install --user ta finta py3cw
+
+# USER ftuser
