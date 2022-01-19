@@ -11,10 +11,10 @@ services:
     # build:
     #   context: .
     #   dockerfile: "./docker/Dockerfile.custom"
-restart: unless-stopped
-container_name: freqtrade
-volumes:
-- "./user_data:/freqtrade/user_data"
+    restart: unless-stopped
+    container_name: freqtrade
+    volumes:
+      - "./user_data:/freqtrade/user_data"
     # Expose api on port 8080 (localhost only)
     # Please read the https://www.freqtrade.io/en/stable/rest-api/ documentation
     # before enabling this.
@@ -29,8 +29,8 @@ volumes:
       --config /freqtrade/user_data/config.json
       --config /freqtrade/user_data/atur-binance.json
       --config /freqtrade/user_data/atur-telegram.json
-  exchange-proxy:
-    image: mikekonan/exchange-proxy:latest-amd64
-    restart: unless-stopped
-    command: -verbose 1
-    container_name: proxy
+exchange-proxy:
+  image: mikekonan/exchange-proxy:latest-amd64
+  restart: unless-stopped
+  command: -verbose 1
+  container_name: proxy

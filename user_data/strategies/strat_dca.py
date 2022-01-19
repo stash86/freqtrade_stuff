@@ -11,23 +11,44 @@ class strat_dca (yourstrat):
 
     position_adjustment_enable = True
     initial_safety_order_trigger = -0.02
-    max_safety_orders = 3
+    max_so_multiplier = 3
     safety_order_step_scale = 2
     safety_order_volume_scale = 1.8
     
-    max_dca_multiplier = (1 + max_safety_orders)
-    if(max_safety_orders > 0):
+    max_so_multiplier = (1 + max_so_multiplier)
+    if(max_so_multiplier > 0):
         if(safety_order_volume_scale > 1):
-            max_dca_multiplier = (2 + (safety_order_volume_scale * (math.pow(safety_order_volume_scale,(max_safety_orders - 1)) - 1) / (safety_order_volume_scale - 1)))
+            max_so_multiplier = (2 + (safety_order_volume_scale * (math.pow(safety_order_volume_scale,(max_so_multiplier - 1)) - 1) / (safety_order_volume_scale - 1)))
         elif(safety_order_volume_scale < 1):
-            max_dca_multiplier = (2 + (safety_order_volume_scale * (1 - math.pow(safety_order_volume_scale,(max_safety_orders - 1))) / (1 - safety_order_volume_scale)))
+            max_so_multiplier = (2 + (safety_order_volume_scale * (1 - math.pow(safety_order_volume_scale,(max_so_multiplier - 1))) / (1 - safety_order_volume_scale)))
+
+    # Since stoploss can only go up and can't go down, if you set your stoploss here, your lowest stoploss will always be tied to the first buy rate
+    # So disable the hard stoploss here, and use custom_sell or custom_stoploss to handle the stoploss trigger
+    stoploss = -1
+
+    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
+                    current_profit: float, **kwargs):
+
+        tag = super().custom_sell(pair, trade, current_time, current_rate, current_profit, **kwargs)
+        if tag:
+            return tag
+            
+        buy_tag = 'empty'
+        if hasattr(trade, 'buy_tag') and trade.buy_tag is not None:
+            buy_tag = trade.buy_tag
+        buy_tags = buy_tag.split()
+
+        if current_profit <= -0.35:
+            return f'stop_loss ({buy_tag})'
+
+        return None
 
     # Let unlimited stakes leave funds open for DCA orders
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float,
                             proposed_stake: float, min_stake: float, max_stake: float,
                             **kwargs) -> float:
                             
-        return proposed_stake / self.max_dca_multiplier
+        return proposed_stake / self.max_so_multiplier
 
     def adjust_trade_position(self, trade: Trade, current_time: datetime,
                               current_rate: float, current_profit: float, min_stake: float,
@@ -38,7 +59,7 @@ class strat_dca (yourstrat):
         filled_buys = trade.select_filled_orders('buy')
         count_of_buys = len(filled_buys)
 
-        if 1 <= count_of_buys <= self.max_safety_orders:
+        if 1 <= count_of_buys <= self.max_so_multiplier:
             safety_order_trigger = (abs(self.initial_safety_order_trigger) * count_of_buys)
             if (self.safety_order_step_scale > 1):
                 safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (math.pow(self.safety_order_step_scale,(count_of_buys - 1)) - 1) / (self.safety_order_step_scale - 1))
