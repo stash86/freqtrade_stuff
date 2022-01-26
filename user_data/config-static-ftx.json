@@ -39,12 +39,12 @@
         "order_book_max": 1
     },
     "pairlists": [
-        // {"method": "StaticPairList"}
-        {
-            "method": "VolumePairList",
-            "number_assets": 500,
-            "sort_key": "quoteVolume",
-        },
+        {"method": "StaticPairList"}
+        // {
+        //     "method": "VolumePairList",
+        //     "number_assets": 500,
+        //     "sort_key": "quoteVolume",
+        // },
     ],
     "exchange": {
         "name": "ftx",
