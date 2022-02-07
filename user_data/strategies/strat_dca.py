@@ -11,16 +11,16 @@ class strat_dca (yourstrat):
 
     position_adjustment_enable = True
     initial_safety_order_trigger = -0.02
-    max_so_multiplier = 3
+    max_entry_position_adjustment = 3
     safety_order_step_scale = 2
     safety_order_volume_scale = 1.8
     
-    max_so_multiplier = (1 + max_so_multiplier)
-    if(max_so_multiplier > 0):
+    max_so_multiplier = (1 + max_entry_position_adjustment)
+    if(max_entry_position_adjustment > 0):
         if(safety_order_volume_scale > 1):
-            max_so_multiplier = (2 + (safety_order_volume_scale * (math.pow(safety_order_volume_scale,(max_so_multiplier - 1)) - 1) / (safety_order_volume_scale - 1)))
+            max_so_multiplier = (2 + (safety_order_volume_scale * (math.pow(safety_order_volume_scale,(max_entry_position_adjustment - 1)) - 1) / (safety_order_volume_scale - 1)))
         elif(safety_order_volume_scale < 1):
-            max_so_multiplier = (2 + (safety_order_volume_scale * (1 - math.pow(safety_order_volume_scale,(max_so_multiplier - 1))) / (1 - safety_order_volume_scale)))
+            max_so_multiplier = (2 + (safety_order_volume_scale * (1 - math.pow(safety_order_volume_scale,(max_entry_position_adjustment - 1))) / (1 - safety_order_volume_scale)))
 
     # Since stoploss can only go up and can't go down, if you set your stoploss here, your lowest stoploss will always be tied to the first buy rate
     # So disable the hard stoploss here, and use custom_sell or custom_stoploss to handle the stoploss trigger
@@ -59,7 +59,7 @@ class strat_dca (yourstrat):
         filled_buys = trade.select_filled_orders('buy')
         count_of_buys = len(filled_buys)
 
-        if 1 <= count_of_buys <= self.max_so_multiplier:
+        if 1 <= count_of_buys <= self.max_entry_position_adjustment:
             safety_order_trigger = (abs(self.initial_safety_order_trigger) * count_of_buys)
             if (self.safety_order_step_scale > 1):
                 safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (math.pow(self.safety_order_step_scale,(count_of_buys - 1)) - 1) / (self.safety_order_step_scale - 1))
