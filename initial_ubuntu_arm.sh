@@ -27,12 +27,12 @@ cd ..
 git clone https://github.com/stash86/freqtrade.git
 git clone https://github.com/stash86/freqtrade_stuff.git
 cd freqtrade
-git checkout dca-new
+# git checkout dca-new
 
 # if you want to update conda
 conda update -n base -c defaults conda
 conda env remove -n freqtrade-conda
-conda env create -n freqtrade-conda -f ftc.yml
+conda env create -n freqtrade-conda -f environment.yml
 conda activate freqtrade-conda
 
 python3 -m pip install --upgrade pip
