@@ -26,27 +26,27 @@ class strat_dca (yourstrat):
     # So disable the hard stoploss here, and use custom_sell or custom_stoploss to handle the stoploss trigger
     stoploss = -1
 
-    def custom_sell(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
+    def custom_exit(self, pair: str, trade: 'Trade', current_time: 'datetime', current_rate: float,
                     current_profit: float, **kwargs):
 
-        tag = super().custom_sell(pair, trade, current_time, current_rate, current_profit, **kwargs)
+        tag = super().custom_exit(pair, trade, current_time, current_rate, current_profit, **kwargs)
         if tag:
             return tag
             
-        buy_tag = 'empty'
-        if hasattr(trade, 'buy_tag') and trade.buy_tag is not None:
-            buy_tag = trade.buy_tag
-        buy_tags = buy_tag.split()
+        enter_tag = 'empty'
+        if hasattr(trade, 'enter_tag') and trade.enter_tag is not None:
+            enter_tag = trade.enter_tag
+        enter_tags = enter_tag.split()
 
         if current_profit <= -0.35:
-            return f'stop_loss ({buy_tag})'
+            return f'stop_loss ({enter_tag})'
 
         return None
 
     # Let unlimited stakes leave funds open for DCA orders
     def custom_stake_amount(self, pair: str, current_time: datetime, current_rate: float,
-                            proposed_stake: float, min_stake: float, max_stake: float,
-                            **kwargs) -> float:
+                            proposed_stake: float, min_stake: Optional[float], max_stake: float,
+                            entry_tag: Optional[str], side: str, **kwargs) -> float:
                             
         return proposed_stake / self.max_so_multiplier
 
@@ -56,24 +56,24 @@ class strat_dca (yourstrat):
         if current_profit > self.initial_safety_order_trigger:
             return None
 
-        filled_buys = trade.select_filled_orders('buy')
-        count_of_buys = len(filled_buys)
+        filled_entries = trade.select_filled_orders(trade.entry_side)
+        count_of_entries = len(filled_entries)
 
-        if 1 <= count_of_buys <= self.max_entry_position_adjustment:
-            safety_order_trigger = (abs(self.initial_safety_order_trigger) * count_of_buys)
+        if 1 <= count_of_entries <= self.max_entry_position_adjustment:
+            safety_order_trigger = (abs(self.initial_safety_order_trigger) * count_of_entries)
             if (self.safety_order_step_scale > 1):
-                safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (math.pow(self.safety_order_step_scale,(count_of_buys - 1)) - 1) / (self.safety_order_step_scale - 1))
+                safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (math.pow(self.safety_order_step_scale,(count_of_entries - 1)) - 1) / (self.safety_order_step_scale - 1))
             elif (self.safety_order_step_scale < 1):
-                safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (1 - math.pow(self.safety_order_step_scale,(count_of_buys - 1))) / (1 - self.safety_order_step_scale))
+                safety_order_trigger = abs(self.initial_safety_order_trigger) + (abs(self.initial_safety_order_trigger) * self.safety_order_step_scale * (1 - math.pow(self.safety_order_step_scale,(count_of_entries - 1))) / (1 - self.safety_order_step_scale))
 
             if current_profit <= (-1 * abs(safety_order_trigger)):
                 try:
                     # This returns first order stake size
-                    stake_amount = filled_buys[0].cost
+                    stake_amount = filled_entries[0].cost
                     # This then calculates current safety order size
-                    stake_amount = stake_amount * math.pow(self.safety_order_volume_scale,(count_of_buys - 1))
+                    stake_amount = stake_amount * math.pow(self.safety_order_volume_scale,(count_of_entries - 1))
                     amount = stake_amount / current_rate
-                    logger.info(f"Initiating safety order buy #{count_of_buys} for {trade.pair} with stake amount of {stake_amount} which equals {amount}")
+                    logger.info(f"Initiating safety order entry #{count_of_entries} for {trade.pair} with stake amount of {stake_amount} which equals {amount}")
                     return stake_amount
                 except Exception as exception:
                     logger.info(f'Error occured while trying to get stake amount for {trade.pair}: {str(exception)}') 
