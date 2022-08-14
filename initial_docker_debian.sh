@@ -1,5 +1,4 @@
-sudo apt-get -y install screen
-sudo apt-get -y install python3-pip python3-venv libatlas-base-dev cmake git wget
+sudo apt-get -y install screen python3-pip python3-venv libatlas-base-dev cmake git wget
 sudo echo "[global]\nextra-index-url=https://www.piwheels.org/simple" > tee /etc/pip.conf
 sudo apt-get remove docker docker-engine docker.io containerd runc
 sudo apt-get update
