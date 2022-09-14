@@ -19,6 +19,7 @@ sudo chmod +x /usr/local/bin/docker-compose
 # bash swap_ubuntu_amd.sh
 # mkdir ft_userdata
 # sudo chown -R ubuntu:ubuntu ./freqtrade
+git clone https://github.com/stash86/freqtrade
 sudo chmod -R 0777 ./freqtrade
-sudo wget https://raw.githubusercontent.com/stash86/freqtrade/develop/initial_freqtrade.sh
-bash initial_freqtrade.sh
+# sudo wget https://raw.githubusercontent.com/stash86/freqtrade/develop/initial_freqtrade.sh
+# bash initial_freqtrade.sh
