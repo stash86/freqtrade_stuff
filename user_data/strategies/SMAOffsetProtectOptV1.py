@@ -24,7 +24,7 @@ def EWO(dataframe, ema_length=5, ema2_length=35):
 
 
 class SMAOffsetProtectOptV1(IStrategy):
-    INTERFACE_VERSION = 2
+    INTERFACE_VERSION = 3
 
     # Buy hyperspace params:
     buy_params = {
@@ -51,13 +51,13 @@ class SMAOffsetProtectOptV1(IStrategy):
 
     # SMAOffset
     base_nb_candles_buy = IntParameter(
-        5, 80, default=6, space='buy', optimize=True)
+        5, 80, default=6, space='buy', optimize=False)
     base_nb_candles_sell = IntParameter(
-        5, 80, default=6, space='sell', optimize=True)
+        5, 80, default=6, space='sell', optimize=False)
     low_offset = DecimalParameter(
-        0.9, 0.99, default=0.9, space='buy', optimize=True)
+        0.9, 0.99, default=0.9, space='buy', optimize=False)
     high_offset = DecimalParameter(
-        0.99, 1.1, default=1, space='sell', optimize=True)
+        0.99, 1.1, default=1, space='sell', optimize=False)
 
     # Protection
     fast_ewo = 50
@@ -76,10 +76,10 @@ class SMAOffsetProtectOptV1(IStrategy):
     trailing_only_offset_is_reached = True
 
     # Sell signal
-    use_sell_signal = True
-    sell_profit_only = False
-    sell_profit_offset = 0.01
-    ignore_roi_if_buy_signal = False
+    use_exit_signal = True
+    exit_profit_only = False
+    exit_profit_offset = 0.01
+    ignore_roi_if_entry_signal = False
 
     # Optimal timeframe for the strategy
     timeframe = '5m'
@@ -110,9 +110,9 @@ class SMAOffsetProtectOptV1(IStrategy):
 
         return dataframe
 
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
-        dataframe.loc[:, 'buy_tag'] = ''
+        dataframe.loc[:, 'enter_tag'] = ''
 
         dataframe['ma_buy'] = ta.EMA(dataframe, timeperiod=int(self.base_nb_candles_buy.value))
 
@@ -122,7 +122,7 @@ class SMAOffsetProtectOptV1(IStrategy):
             (dataframe['rsi'] < self.rsi_buy.value) &
             (dataframe['volume'] > 0)
         )
-        dataframe.loc[buy_ewo_high, 'buy_tag'] += 'ewo_high '
+        dataframe.loc[buy_ewo_high, 'enter_tag'] += 'ewo_high '
         conditions.append(buy_ewo_high)
 
         buy_ewo_low = (
@@ -130,18 +130,18 @@ class SMAOffsetProtectOptV1(IStrategy):
             (dataframe['EWO'] < self.ewo_low.value) &
             (dataframe['volume'] > 0)
         )
-        dataframe.loc[buy_ewo_low, 'buy_tag'] += 'ewo_low '
+        dataframe.loc[buy_ewo_low, 'enter_tag'] += 'ewo_low '
         conditions.append(buy_ewo_low)
 
         if conditions:
             dataframe.loc[
                 reduce(lambda x, y: x | y, conditions),
-                'buy'
+                'enter_long'
             ]=1
 
         return dataframe
 
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         conditions = []
         dataframe.loc[:, 'exit_tag'] = ''
 
@@ -157,7 +157,7 @@ class SMAOffsetProtectOptV1(IStrategy):
         if conditions:
             dataframe.loc[
                 reduce(lambda x, y: x | y, conditions),
-                'sell'
+                'exit_long'
             ]=1
 
         return dataframe
