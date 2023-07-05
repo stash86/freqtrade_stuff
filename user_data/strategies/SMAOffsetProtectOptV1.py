@@ -51,13 +51,13 @@ class SMAOffsetProtectOptV1(IStrategy):
 
     # SMAOffset
     base_nb_candles_buy = IntParameter(
-        5, 80, default=6, space='buy', optimize=False)
+        5, 80, default=6, space='buy', optimize=True)
     base_nb_candles_sell = IntParameter(
-        5, 80, default=6, space='sell', optimize=False)
+        5, 80, default=6, space='sell', optimize=True)
     low_offset = DecimalParameter(
-        0.9, 0.99, default=0.9, space='buy', optimize=False)
+        0.9, 0.99, default=0.9, space='buy', optimize=True)
     high_offset = DecimalParameter(
-        0.99, 1.1, default=1, space='sell', optimize=False)
+        0.99, 1.1, default=1, space='sell', optimize=True)
 
     # Protection
     fast_ewo = 50
